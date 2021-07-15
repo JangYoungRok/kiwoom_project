@@ -23,5 +23,14 @@ class Kiwoom:
         data = self.ocx.dynamicCall("GetLoginInfo(QString)", tag)
         return data
 
+    def GetCodeListByMarket(self, market):
+        data = self.ocx.dynamicCall("GetCodeListByMarket(QString)", market)
+        codes = data.split(";")
+        return codes[:-1]
+
+    def GetMasterCodeName(self, code):
+        data = self.ocx.dynamicCall("GetMasterCodeNAme(QString)", code)
+        return data
+
 
 app = QApplication(sys.argv)

@@ -1,0 +1,13 @@
+종목코드 인덱스
+GetCodeListByMarket ( self, market)
+market - String
+'0' : 장내 (코스피)
+'3' : ELW
+'4' : 뮤츄얼펀드
+'5' : 신주인수권
+'6' : 리츠
+'8' : ETF
+'9' : 하이일드펀드
+'10' : 코스닥
+'30' : K-OTC
+'50' : 코넥스스
