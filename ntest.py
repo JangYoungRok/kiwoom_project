@@ -1,4 +1,2 @@
-import numpy as np
-
-np = np.array(range(2, 10))
-print(np)
+d = [('000', 'perpbr')]
+print(d[0][0])

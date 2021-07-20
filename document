@@ -11,3 +11,161 @@ market - String
 '10' : 코스닥
 '30' : K-OTC
 '50' : 코넥스스
+
+GetMasterListedStockCnt code<String>
+int 상장된 주식수
+
+GetMasterListedStockDate code<String>
+str 6자리 날짜 상장된 날짜
+
+GetMasterConstruction code<Stirng>
+str 감리
+
+GetMasterStockState code<String>
+str 주식의 상태
+
+2147483647
+19750611 <class 'str'>
+80600 <class 'int'>
+정상 <class 'str'>
+증거금20%|담보대출|신용가능 <class 'str'>
+
+GetThemeGroupList(nType)
+
+nType 0 : return "테마코드(숫자) | 테마이름(문자)"
+nType 1 : return "테마이름(문자) | 테마코드(숫자)"
+
+GetThemeSroupCode(strThmeGroupCode)
+
+키움 OpenAPI
+메서드 : 간단한 데이터 전송에 사용 됨, 이벤트를 기다릴 필요가 없음
+TR : 원하는 데이터의 종류에 대해 입력하고 요청하는 방식
+     이벤트를 처리해야 함(요청 후 대기 시간이 있음)
+     조회 횟수 제한이 존재
+     초당 5회의 횟수 제한한
+
+Real : 등록/해제 기반 방식
+       실시간 처리에 적합함
+       자동으로 데이터를 내려 받음
+       예를 들어 거래가 체결 일어나면 알려 주세요~
+       서버가 거래가 체결이 되면 이벤트를 띄워 줌
+
+
+TR 사용법
+SetInputValue 입력 데이터 준비
+
+CommRqData 전송
+
+Event Loop~~대기
+
+GTeCommData 수진 데이터 가져오기
+
+TR OPT번호가 있고
+KOASTUDIO에서 각 OPT 목록이 확인이 가능
+
+
+PER PBR 콤보전략
+
+Price to Book Ratio 주가를 주당 순자산으로 나눈 것
+PBR = 주가 / 주당 순자산 = 시가총액 / 순자산
+
+Price to Earning Ratio 주가를 주당 순이익으로 나눈 것
+PER = 주가 / 주당순이익 = 시가총액 / 당기순이익
+
+매수전략
+PER 2.5 ~ 10인 주식을 필터링 한다.
+그 중 PBR 낮은 30개 주식을 매수 한다.
+
+매도전략
+1년 1회 리밸런싱
+1년 후 전부 매도 후 새로운 종목을 매수
+
+sort
+data = [1, 4, 2, 5, 3]
+data.sort()
+print(data)
+-> [1, 2, 3, 4, 5]
+원본을 정렬
+
+result = sorted(data, reverse=True)
+print(result)
+sorted 함수는 정렬한 새로운 데이터를 return
+원본은 정렬되지 않음
+
+lambda
+
+def square(x):
+    return x*x
+
+f = lambda x : x*x
+print(f(3))
+
+복잡한 데이터의 정렬
+data = [('kim',9), ('lee',5), ('park', 10)]
+result = sorted(data, key = lambda x:x[1])
+
+def get_score(t):
+return t[1]
+
+result = sorted(data, key=get_score)
+sorted 정렬하는 기준이 되는 함수를 넣어 주면 됨
+이름이 없는 함수를 넣어서 조금더 간결하게 코딩이 가능 lambda
+
+싱글데이터 VS 멀티데이터
+
+싱글데이터는 return 값이 row가 1인 데이터 컬럼의 갯수는 상관 없음 ex) opt10001
+
+멀티 데이터 여러 로우로 구성된 데이터 ex) opt10081
+행의 갯수를 가져 와야 함
+GetRepeatCnt STrCode, rqname
+
+
+매매
+SendOrder 0.25초 sleep 필요
+
+SRQName - 사용자 구분요청
+sScreenNo - 화면번호
+sAccNo - 계좌번호
+nOrderType - 주문 유형 1신규매수 2신규매도 3매수취소 5매수정정 6매도정정
+sCode - 주식종목코드
+nQty - 수량
+nPrice - 주문단가  *시장가 : 0
+SHogaGb - 거래구분 00 지정가 , 03 시장가
+sOrgOrderNo - 원주문 번호 신규 ''  *수정일 경우 원주문 번호
+
+SendOrder()
+GetChejanData()
+
+Event
+OnReceiveMsg() : 서버가 통신을 받은 후 메세지 받은 시점을 알려줌
+OnReceiveTrData() : 서버통신 후 데이터를 받은 시점을 알려줌
+OnReceiveChejan/Data(Event) : 체결데이터를 받은 시점을 알려줌
+
+호가단위
+1000원 미만 / 1원 / 1원
+5000원 미만 / 5원 / 5원
+10000원 미만 / 10원 /10원
+50000원 미만 / 50원 / 50원
+100000원 미만/ 100원 / 100원
+500000원 미만 / 500원 / 100원
+500000원 이산 / 1000원 / 100원
+
+호가 수량 : 1주 단위 주문 가능
+
+조건사용 방법
+조건을 생성 HTS
+파이썬에서 Get Condition data
+파이썬에서 data 조건 리스트 -> 조건 뽑아내기
+조건에 해당하는 종목 찾기 SendCondition -> event Receive 받아야 함
+0 일반조회
+1 실시간조회
+2 연속조회
+
+조건검색 (HTS : 화면 0150)
+
+GetConditionLoad()
+조건식 임시로 저장
+
+
+
+
