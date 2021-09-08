@@ -1,4 +1,5 @@
 from kiwoom import *
+import time
 
 kiwoom = Kiwoom()
 kiwoom.CommConnect()
@@ -75,7 +76,7 @@ print("로그인 완료")
 # 두번째 인자 : trname
 # 세번째 인자 : 0 번째 만약 받는 데이터가 2차원이면 row 데이터 위치
 # 네번째 인자 : screen no 아무거나
-
+# print('main window')
 # print(kiwoom.tr_data)
 
 # ---------------------------------------------
@@ -85,6 +86,7 @@ print("로그인 완료")
 # codes = kiwoom.GetCodeListByMarket('0') + kiwoom.GetCodeListByMarket('10')
 # per_result = []
 # for code in codes[:50]:
+#     print(code)
 #     kiwoom.SetInputValue('종목코드', code)
 #     kiwoom.CommRqData('opt10001', 'opt10001', 0, '0101')
 #
@@ -105,9 +107,9 @@ print("로그인 완료")
 #         per_result.append((code, per, pbr))
 #
 #     time.sleep(0.2)
-
+#
 # print(per_result)
-
+#
 # per_result_sorted = sorted(per_result, key=lambda x: x[2])
 # print(per_result_sorted)
 #
@@ -178,12 +180,25 @@ print("로그인 완료")
 # ---------------------------------------------
 # HTS에서 만든 조건식 리스트 불러오기
 # ---------------------------------------------
+# accounts = kiwoom.GetLoginInfo("ACCNO")
+# account = accounts.split(';')[1]
+# print(account)
+# kiwoom.GetConditionLoad()
+# condition = kiwoom.GetConditionNameList()
+# print(condition[1][0])
+# print(condition[1][1])
+# kiwoom.SendCondition('0101', condition[1][1], condition[1][0], 0)
+#
+# print(kiwoom.condition_codes)
 
-kiwoom.GetConditionLoad()
-condition = kiwoom.GetConditionNameList()
-print(condition[0][0])
-print(condition[0][1])
+# ---------------------------------------------
+# 미체결 리스트 조회
+# ---------------------------------------------
+# accounts = kiwoom.GetLoginInfo("ACCNO")
+# account = accounts.split(';')[1]
+# print(account)
+#
+# kiwoom.tr_opt10075(account)
+# print(kiwoom.tr_df)
 
-kiwoom.SendCondition('0101', condition[0][1], condition[0][0], 0)
-print(kiwoom.condition_codes)
-
+# kiwoom.SendOrder('매수취소', "0101", account, 3, '335810', 0, 0, "", "0113214")

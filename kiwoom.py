@@ -14,9 +14,9 @@ class Kiwoom:
     tr_df: DataFrame
     data_list: List[Tuple[Any, Any, Any, Any, Any, Any]]
     remained: bool  # tr 연속 조회시 남아 있는 데이터가 있는지 체크하는 변수
-    tr_data: Dict[str, Any]
 
     def __init__(self):
+        self.tr_data = {}
         self.condition_tr_loop = QEventLoop()
         self.condition_load_loop = QEventLoop()
         self.order_loop = QEventLoop()
@@ -34,7 +34,7 @@ class Kiwoom:
     def CommConnect(self):
         self.ocx.dynamicCall("CommConnect()")
         self.login_loop.exec()
-        
+
     def _handler_tr_condition(self, screen, codelist, cond_name, cond_index, next):
         codes = codelist.split(';')
         self.condition_codes = codes[:-1]
@@ -60,19 +60,84 @@ class Kiwoom:
             self.remained = False
 
         if rqname == 'opt10001':
-            self.tr_data = {}
+            print('opt10001')
             per = self.GetCommData(trcode, rqname, 0, 'PER')
             pbr = self.GetCommData(trcode, rqname, 0, 'PBR')
+            current_price = self.GetCommData(trcode, rqname, 0, '현재가')
+
+            print(f'per : {per}')
+            print(f'pbr : {pbr}')
+            print(f'current_price : {current_price}')
+
             self.tr_data['PER'] = per
             self.tr_data['PBR'] = pbr
+            self.tr_data['current_price'] = current_price
+
+            print(self.tr_data)
+
         elif rqname == 'opt10081':
             print(rqname)
             self._opt10081(rqname, trcode)
 
+        elif rqname == 'OPW00007':
+            print(rqname)
+            rows = self.GetRepeatCnt(trcode, rqname)
+            self.data_list = []
+            for i in range(rows):
+                count = self.GetCommData(trcode, rqname, i, "체결수량")
+                price = self.GetCommData(trcode, rqname, i, "체결단가")
+                code = self.GetCommData(trcode, rqname, i, "종목번호")
+                name = self.GetCommData(trcode, rqname, i, "종목명")
+
+                self.data_list.append((count, price, code, name))
+
+            self.tr_df = DataFrame(data=self.data_list, columns=['count', 'price', 'code', 'name'])
+
+        elif rqname == '계좌평가잔고내역요청':
+            print(f'rqname : {rqname}')
+            print(f'trcode : {trcode}')
+
+            rows = self.GetRepeatCnt(trcode, rqname)
+            print(f'rows : {rows}')
+            self.data_list = []
+            for i in range(rows):
+                count = int(self.GetCommData(rqname, trcode, i, "보유수량"))
+                price = int(self.GetCommData(rqname, trcode, i, "현재가"))
+                code = self.GetCommData(rqname, trcode, i, "종목번호")[1:]
+                name = self.GetCommData(rqname, trcode, i, "종목명")
+
+                print(f'count : {count}')
+                print(f'price : {price}')
+                print(f'code : {code}')
+                print(f'name : {name}')
+
+                self.data_list.append((count, price, code, name))
+
+            self.tr_df = DataFrame(data=self.data_list, columns=['count', 'price', 'code', 'name'])
+
+        elif trcode == 'opt10075':
+            print(f'rqname : {rqname}')
+            print(f'trcode : {trcode}')
+
+            rows = self.GetRepeatCnt(trcode, rqname)
+            print(f'rows : {rows}')
+            self.data_list = []
+            for i in range(rows):
+                order_number = self.GetCommData(rqname, trcode, i, "주문번호")
+                name = self.GetCommData(rqname, trcode, i, "종목명")
+                code = self.GetCommData(rqname, trcode, i, "종목코드")
+                order_qty = self.GetCommData(rqname, trcode, i, "주문수량")
+                unsigned_qty = self.GetCommData(rqname, trcode, i, "미체결수량")
+
+                self.data_list.append((order_number, name, code, order_qty, unsigned_qty))
+
+            self.tr_df = DataFrame(data=self.data_list,
+                                   columns=['order_number', 'name', 'code', 'order_qty', 'unsigned_qty'])
+
         try:
             self.tr_loop.exit()
         except:
-            pass
+            print('error')
 
     def GetLoginInfo(self, tag):
         # tag
@@ -86,7 +151,7 @@ class Kiwoom:
         return codes[:-1]
 
     def GetMasterCodeName(self, code):
-        data = self.ocx.dynamicCall("GetMasterCodeNAme(QString)", code)
+        data = self.ocx.dynamicCall("GetMasterCodeName(QString)", code)
         return data
 
     def GetMasterListedStockCnt(self, code):
@@ -195,6 +260,27 @@ class Kiwoom:
     def SendCondition(self, screen, cond_name, cond_index, search):
         self.ocx.dynamicCall("SendCondition(QString, QString, int, int)", screen, cond_name, cond_index, search)
         self.condition_tr_loop.exec()
+
+    # 계좌평가잔고내역요청
+    def tr_opw00018(self, account, password):
+        self.SetInputValue('계좌번호', account)
+        self.SetInputValue('비밀번호', password)
+        self.SetInputValue('비밀번호입력매체구분', '00')
+        self.SetInputValue('조회구분', '2')
+        self.CommRqData('계좌평가잔고내역요청', 'opw00018', 0, '0101')
+
+    # 미체결요청
+    def tr_opt10075(self, account):
+        self.SetInputValue('계좌번호', account)
+        self.SetInputValue('전체종목구분', '0')
+        self.SetInputValue('매매구분', '2')
+        self.SetInputValue('종목코드', '')
+        self.SetInputValue('체결구분', '1')
+        self.CommRqData('미체결요청', 'opt10075', 0, '0101')
+
+    # 계좌주문체결내역상세요청
+    def tr_opw00007(self, ):
+        ...
 
 
 app = QApplication(sys.argv)

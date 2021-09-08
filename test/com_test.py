@@ -1,4 +1,4 @@
-import win32com.client
+# import win32com.client
 # Component Object Model (com)
 # 해당 라이브러리는 윈도우 마이크로 소프트 기반의 프로그램 제어와
 # 다른 언어로 만들어진 예를 들어 C++ 같은 언어로 만들어진 객체를
